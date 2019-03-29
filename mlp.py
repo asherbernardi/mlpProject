@@ -9,6 +9,8 @@ Perceptron = perceptron.Perceptron
 class PerceptronLayer:
     def __init__(self, perceptrons):
         self.perceptrons = perceptrons
+    def __str__(self):
+        return " | ".join([str(p) for p in self.perceptrons])
     def initialize(num_perceptrons, num_weights, activation):
         return PerceptronLayer([Perceptron.initialize(num_weights, activation)
                                 for i in range(num_perceptrons)])
@@ -17,6 +19,12 @@ class PerceptronLayer:
 class MultiLayerPerceptron:
     def __init__(self, layers):
         self.layers = layers
+    def __str__(self):
+        ret = ""
+        for i, l in enumerate(self.layers):
+            ret += "Layer " + str(i) + ":\n" + str(l) + "\n"
+        ret += "\n"
+        return ret
     # The last layer (layers_sizes[-1]) will be the number of outputs of the mlp
     def initialize(layer_sizes, dimensionality, activation):
         # this holds an array that is used to determine how many weights should
@@ -36,17 +44,24 @@ class MultiLayerPerceptron:
     def single_layer_backprop(self, inputs, targets, eta=0.1):
         assert(len(targets) == len(self.layers[1].perceptrons))
         outputs = self.feed_forward(inputs)
-        print(outputs)
+        #print([str(self.layers[0].perceptrons[i]) for i in range(2)])
         delta_y = [y_out * (1 - y_out) * (t - y_out) for y_out, t in zip(outputs[1], targets)]
+        print(delta_y)
         delta_z = [z_out * (1 - z_out) *
                     np.dot(delta_y, [y.weights[k]
                     for y in self.layers[1].perceptrons])
                     for k, z_out in enumerate(outputs[0])]
-        for l, y in enumerate(self.layers[1].perceptrons):
-            print(y.weights)
-            y.weights = [weight + eta * delta_y[l] * outputs[0][k] for k, weight in enumerate(y.weights)]
-        for k, z in enumerate(self.layers[0].perceptrons):
-            z.weights = [z.weights[j] + eta * delta_z[k] * inputs[j] for j in range(len(z.weights))]
+        for i, output in enumerate(self.layers[-1].perceptrons):
+            for j, hidden_out in enumerate([1] + outputs[0]):
+                output.weights[j] += eta * delta_y[i] * hidden_out
+        for i, hidden in enumerate(self.layers[0].perceptrons):
+            for j, input in enumerate([1] + inputs):
+                hidden.weights[j] += eta * delta_z[i] * input
+        # for l, y in enumerate(self.layers[1].perceptrons):
+        #     y.weights = [weight + eta * delta_y[l] * outs for weight, outs in zip(y.weights, [1] + outputs[0])]
+        # for k, z in enumerate(self.layers[0].perceptrons):
+        #     z.weights = [weight + eta * delta_z[k] * ins for weight, ins in zip(z.weights, [1] + inputs)]
+        print(self)
 
 # p is an UnthreasholdedPerceptron
 def stochastic_gradient_descent(data, targets, termination = 100,
@@ -62,15 +77,16 @@ def train(M, data, targets, termination = 100):
     for i in range(termination):
         for d, t in zip(data, targets):
             mlp.single_layer_backprop(d, [t])
+    return mlp
 
 # feed forward
 def classify(mlp, inputs):
     return [mlp.feed_forward(i)[-1] for i in inputs]
 
 # test XOR
-clsfyr = train(2, [[-1,-1],[-1,1],[1,-1],[1,1]], [-1,1,1,-1])
+clsfyr = train(2, [[0,0],[0,1],[1,0],[1,1]], [0,1,1,0])
 
-results = classify(clsyr, [[1,1],[0,0],[1,-1],[-1,1]])
+results = classify(clsfyr, [[1,1],[0,0],[1,0],[0,1]])
 print(results) # should be -1, -1, 1, 1
 
 # xor_network = MultiLayerPerceptron([PerceptronLayer([Perceptron([-30,20,20],perceptron.sigmoid),Perceptron([-10,20,20],perceptron.sigmoid)]),PerceptronLayer([Perceptron([-30,-60,60],perceptron.sigmoid)])])
