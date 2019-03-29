@@ -35,6 +35,7 @@ class MultiLayerPerceptron:
                     np.dot(delta_y, [self.layers[1].perceptrons[l].weights[k]
                     for l in range(len(self.layers[1].perceptrons))])
                     for k,zk in enumerate(outputs[0])]
+        for yl in outputs[]
 
 # p is an UnthreasholdedPerceptron
 def stochastic_gradient_descent(data, targets, termination = 100,
