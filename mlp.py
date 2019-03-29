@@ -7,8 +7,9 @@ import perceptron
 class PerceptronLayer:
     def __init__(self, perceptrons):
         self.perceptrons = perceptrons
-    def initialize(num_perceptrons, num_weights):
-        return PerceptronLayer([Perceptron.initialize(num_weights) for i in range(num_perceptrons)])
+    def initialize(num_perceptrons, num_weights, activation):
+        return PerceptronLayer([Perceptron.initialize(num_weights, activation)
+                                for i in range(num_perceptrons)])
 
 # a class that represents a neural network
 class MultiLayerPerceptron:
@@ -16,10 +17,15 @@ class MultiLayerPerceptron:
         self.layers = layers
     def feed_forward(self, inputs):
         for layer in self.layers:
-            for perceptron in layer.perceptrons
+            for perceptron in layer.perceptrons:
+                
+    def initialize(layer_sizes, num_weights, activation):
+        return MultiLayerPerceptron([PerceptronLayer.initialize(num_perceptrons,
+                                     num_weights, activation) for num_perceptrons in layer_sizes])
 
 # p is an UnthreasholdedPerceptron
-def stochastic_gradient_descent(data, targets, termination = 100, activation = perceptron.sigmoid):
+def stochastic_gradient_descent(data, targets, termination = 100,
+                                activation = perceptron.sigmoid):
     p = init_unthreasholded_perceptron(activation)
     for i in range(termination):
         for x,t in zip(data, targets):
