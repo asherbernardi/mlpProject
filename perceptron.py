@@ -24,7 +24,7 @@ class Perceptron :
     def initialize(num_weights, activation):
         return Perceptron([uniform(-1,1) for i in range(num_weights)], activation)
     def __call__(self, inputs) :
-        return [self.activation(j) for j in np.dot(self.weights, [1]+inputs)]
+        return self.activation(np.dot(self.weights, [1]+inputs))
     def __str__(self) :
         return ",".join([str(w) for w in self.weights])
 
@@ -56,45 +56,45 @@ def perc_train_step(p, x, t, eta=.1) :
 
 
 
-line = np.linspace(-5, 5, 100)
-import matplotlib.pyplot as plt
+# line = np.linspace(-5, 5, 100)
+# import matplotlib.pyplot as plt
 
-# The other activation functions are already in numpy
+# # The other activation functions are already in numpy
 
-# Let's see the 0/1 activation functions
+# # Let's see the 0/1 activation functions
 
-plt.plot(line, [step(x) for x in line], label="step")
-plt.plot(line, [sigmoid(x) for x in line], label="sigmoid")
-plt.legend(loc="best")
-plt.show()
+# plt.plot(line, [step(x) for x in line], label="step")
+# plt.plot(line, [sigmoid(x) for x in line], label="sigmoid")
+# plt.legend(loc="best")
+# plt.show()
 
-# Now let's see the -1/1 activation functions
+# # Now let's see the -1/1 activation functions
 
-plt.plot(line, np.tanh(line), label="tanh")
-plt.plot(line, np.sign(line), label="sign")
-plt.plot(line, [sigmoid_adjusted(x) for x in line], label="sigmoid")
-plt.legend(loc="best")
-plt.show()
-
-
-and_gate = Perceptron([-1, 1, 1], np.tanh)
-
-[and_gate([1,1]),and_gate([1,-1]),and_gate([-1,-1])]
-
-or_gate = Perceptron([1, 1, 1], np.tanh)
-
-[or_gate([1,1]), or_gate([1,-1]), or_gate([-1,-1])]
+# plt.plot(line, np.tanh(line), label="tanh")
+# plt.plot(line, np.sign(line), label="sign")
+# plt.plot(line, [sigmoid_adjusted(x) for x in line], label="sigmoid")
+# plt.legend(loc="best")
+# plt.show()
 
 
+# and_gate = Perceptron([-1, 1, 1], np.tanh)
+
+# [and_gate([1,1]),and_gate([1,-1]),and_gate([-1,-1])]
+
+# or_gate = Perceptron([1, 1, 1], np.tanh)
+
+# [or_gate([1,1]), or_gate([1,-1]), or_gate([-1,-1])]
 
 
 
-# train an and gate
-data = [([1,1],1), ([1,-1],-1), ([-1,1],-1), ([-1,-1],-1)]
-p = initialize_perceptron(3)
-for i in range(10) :
-    print("iteration " + str(i))
-    print(str(p))
-    print(",".join([str(p(d[0])) for d in data]))
-    for d in data:
-        perc_train_step(p, d[0], d[1])
+
+
+# # train an and gate
+# data = [([1,1],1), ([1,-1],-1), ([-1,1],-1), ([-1,-1],-1)]
+# p = initialize_perceptron(3)
+# for i in range(10) :
+#     print("iteration " + str(i))
+#     print(str(p))
+#     print(",".join([str(p(d[0])) for d in data]))
+#     for d in data:
+#         perc_train_step(p, d[0], d[1])
